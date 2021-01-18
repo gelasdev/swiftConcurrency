@@ -4,7 +4,7 @@ import Dispatch
 
 //func login(userName: String, password: String) async -> String {
 //    print("Trying to get token")
-//    sleep(2)
+//    await sleep(2)
 //    return await withUnsafeContinuation({ continuation in
 //        login(userName: userName, password: password) { token in
 //            continuation.resume(returning: token)
@@ -12,11 +12,20 @@ import Dispatch
 //    })
 //}
 
+@discardableResult
+func sleep(_ seconds: Int) async -> Int {
+    return await withUnsafeContinuation { continuation in
+        DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(seconds)) {
+            continuation.resume(returning: seconds)
+        }
+    }
+}
+
 struct LoginError: Error {}
 
 func login(userName: String, password: String) async throws -> String {
     print("Trying to get token")
-    sleep(2)
+    await sleep(2)
     return try await withUnsafeThrowingContinuation({ continuation in
         if password != "1" {
             let error = LoginError()
@@ -34,15 +43,15 @@ func login(userName: String, password: String) async throws -> String {
     print(token)
 }
 
-
+@asyncHandler
 func login(userName: String, password: String, completion: @escaping (String) -> Void) {
-    sleep(2)
+    await sleep(1)
     completion("1")
 }
 
 func loadSections() async -> [String] {
     print("Trying to get sections")
-    sleep(1)
+    await sleep(1)
     print("Sections loaded")
     return ["Section 1", "Section 2", "Section 3", "Section 4"]
 }
